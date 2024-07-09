@@ -1,6 +1,8 @@
 package com.bitmask.android.sqlitesimple
 
 import android.os.Bundle
+import android.util.Log
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -11,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.bitmask.android.sqlitesimple.tables.BrowsingHistoryTable
 import com.bitmask.android.sqlitesimple.ui.theme.SQLiteSimpleTheme
 
 class MainActivity : ComponentActivity() {
@@ -27,6 +30,15 @@ class MainActivity : ComponentActivity() {
                 }
             }
         }
+
+        Log.d("MainActivity", "onCreate");
+
+        BrowsingHistoryTable.insertOrUpgrade("aaa", "bbb", 1);
+        val count = BrowsingHistoryTable.getCount();
+        Log.d("MainActivity", "BrowsingHistoryTable count: $count");
+
+        Toast.makeText(this, "count: $count", Toast.LENGTH_SHORT).show();
+
     }
 }
 

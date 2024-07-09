@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tables>
+    <table name="com.bitmask.android.sqlitesimple.tables.BrowsingHistoryTable" />
+</tables>
