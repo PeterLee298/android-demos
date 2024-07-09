@@ -33,7 +33,13 @@ class MainActivity : ComponentActivity() {
 
         Log.d("MainActivity", "onCreate");
 
+//        BrowsingHistoryTable.cleanTable();
         BrowsingHistoryTable.insertOrUpgrade("aaa", "bbb", 1);
+        for (i in 1..100) {
+            BrowsingHistoryTable.insertOrUpgrade("aaa".plus(i), "bbb".plus(i), i);
+            Log.d("MainActivity", "BrowsingHistoryTable insertOrUpgrade: $i");
+        }
+
         val count = BrowsingHistoryTable.getCount();
         Log.d("MainActivity", "BrowsingHistoryTable count: $count");
 

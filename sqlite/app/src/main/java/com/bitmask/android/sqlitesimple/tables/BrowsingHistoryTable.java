@@ -21,7 +21,7 @@ public class BrowsingHistoryTable implements ITable {
 
     @Override
     public void createTable(SQLiteDatabase database) {
-        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_URL + " TEXT, " + COLUMN_TITLE + " TEXT, " + COLUMN_DATE + " DATETIME DEFAULT CURRENT_TIMESTAMP, " + COLUMN_IS_FAVORITE + " INTEGER)";
+        String sql = "CREATE TABLE IF NOT EXISTS " + TABLE_NAME + " (" + COLUMN_ID + " INTEGER PRIMARY KEY AUTOINCREMENT, " + COLUMN_URL + " TEXT UNIQUE, " + COLUMN_TITLE + " TEXT, " + COLUMN_DATE + " DATETIME DEFAULT CURRENT_TIMESTAMP, " + COLUMN_IS_FAVORITE + " INTEGER)";
         database.execSQL(sql);
     }
 
@@ -39,7 +39,7 @@ public class BrowsingHistoryTable implements ITable {
         createTable(database);
     }
 
-    public static void deleteTable() {
+    public static void cleanTable() {
         try {
             DBHelperUtil.getDatabase().delete(TABLE_NAME, "1=1", null);
         } catch (Exception e) {
@@ -80,6 +80,56 @@ public class BrowsingHistoryTable implements ITable {
             DBHelperUtil.closeDatabase();
             throw new RuntimeException(e);
         }
+    }
+
+    public static void insertOrUpgrade(BrowsingHistoryBin browsingHistoryBin) {
+        try {
+            DBHelperUtil.getDatabase().execSQL("INSERT OR REPLACE INTO " + TABLE_NAME + " (" + COLUMN_URL + ", " + COLUMN_TITLE + ", " + COLUMN_IS_FAVORITE + ") VALUES (?,?,?)", new Object[]{browsingHistoryBin.getUrl(), browsingHistoryBin.getTitle(), browsingHistoryBin.getIsFavorite()});
+        } catch (Exception e) {
+            DBHelperUtil.closeDatabase();
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void insertOrUpgrade(List<BrowsingHistoryBin> browsingHistoryBins) {
+        try {
+            for (BrowsingHistoryBin browsingHistoryBin : browsingHistoryBins) {
+                DBHelperUtil.getDatabase().execSQL("INSERT OR REPLACE INTO " + TABLE_NAME + " (" + COLUMN_URL + ", " + COLUMN_TITLE + ", " + COLUMN_IS_FAVORITE + ") VALUES (?,?,?)", new Object[]{browsingHistoryBin.getUrl(), browsingHistoryBin.getTitle(), browsingHistoryBin.getIsFavorite()});
+            }
+        } catch (Exception e) {
+            DBHelperUtil.closeDatabase();
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static List<BrowsingHistoryBin> getAll() {
+        List<BrowsingHistoryBin> browsingHistoryBins = new ArrayList<>();
+        Cursor cursor = null;
+        try {
+            cursor = DBHelperUtil.getDatabase().query(TABLE_NAME, null, null, null, null, null, COLUMN_DATE + " DESC", null);
+
+            if (cursor.moveToFirst()){
+                do {
+                    BrowsingHistoryBin browsingHistoryBin = new BrowsingHistoryBin();
+                    browsingHistoryBin.setId(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_ID)));
+                    browsingHistoryBin.setUrl(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_URL)));
+                    browsingHistoryBin.setTitle(cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_TITLE)));
+                    browsingHistoryBin.setDate(cursor.getLong(cursor.getColumnIndexOrThrow(COLUMN_DATE)));
+                    browsingHistoryBin.setIsFavorite(cursor.getInt(cursor.getColumnIndexOrThrow(COLUMN_IS_FAVORITE)));
+                    browsingHistoryBins.add(browsingHistoryBin);
+                } while (cursor.moveToNext());
+            }
+        } catch (Exception e) {
+            DBHelperUtil.closeDatabase();
+            throw new RuntimeException(e);
+        } finally {
+            if (cursor!= null) {
+                cursor.close();
+            }
+        }
+        DBHelperUtil.closeDatabase();
+        return browsingHistoryBins;
     }
 
     public static List<BrowsingHistoryBin> getByPage(int page, int pageSize) {
