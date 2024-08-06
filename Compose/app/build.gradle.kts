@@ -4,11 +4,11 @@ plugins {
 }
 
 android {
-    namespace = "com.bitmask.android.kotlin"
+    namespace = "com.bitmask.android.compose"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.bitmask.android.kotlin"
+        applicationId = "com.bitmask.android.compose"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
@@ -57,7 +57,6 @@ dependencies {
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.androidx.ui)
     implementation(libs.androidx.ui.graphics)
-    // Android Studio Preview doesn't explicitly require a dependency on Compose Android View
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
     testImplementation(libs.junit)
