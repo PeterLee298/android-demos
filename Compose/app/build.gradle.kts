@@ -59,6 +59,12 @@ dependencies {
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
 
+    implementation("androidx.compose.foundation:foundation")
+
+    implementation("androidx.lifecycle:lifecycle-runtime-compose")
+    implementation("androidx.compose.runtime:runtime-livedata")
+    implementation("androidx.compose.runtime:runtime-rxjava2")
+
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
