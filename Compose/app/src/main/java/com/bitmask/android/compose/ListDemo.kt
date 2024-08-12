@@ -11,12 +11,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -25,7 +25,7 @@ import androidx.compose.ui.unit.dp
 fun WellnessTaskItem(
     taskName: String,
     checked: Boolean,
-    oncheckedChange: (Boolean) -> Unit,
+    onCheckedChange: (Boolean) -> Unit,
     onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -40,33 +40,17 @@ fun WellnessTaskItem(
             text = taskName
         )
        Checkbox(checked = checked,
-           onCheckedChange = oncheckedChange)
+           onCheckedChange = onCheckedChange
+       )
        IconButton(onClick = onClose) {
            Icon(Icons.Filled.Close, contentDescription = "Close")
        }
    }
 }
 
-@Composable
-fun WellnessTaskItem(
-    taskName: String,
-    onClose: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    var checkedState by rememberSaveable { mutableStateOf(false) }
-
-    WellnessTaskItem(
-        taskName = taskName,
-        checked = checkedState,
-        oncheckedChange = {
-            newValue -> checkedState = newValue
-        },
-        onClose = onClose,
-        modifier = modifier
-    )
+class WellnessTask(val id: Int, val label: String, initialChecked: Boolean = false) {
+    var checked by mutableStateOf(initialChecked)
 }
-
-data class WellnessTask(val id: Int, val label: String, val checked: Boolean = false)
 
 fun getWellnessTasks() = List(30) {
     i -> WellnessTask(i, "Task #$i")
@@ -77,14 +61,17 @@ fun WellnessTaskList(
     list: List<WellnessTask> = remember {
         getWellnessTasks()
     },
+    onCheckedTask: (WellnessTask, Boolean) -> Unit,
     onCloseTask: (WellnessTask) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
         items(list) {
             task -> WellnessTaskItem(
-                taskName = task.label,
-                onClose = { onCloseTask(task) },
+            taskName = task.label,
+            checked = task.checked,
+            onCheckedChange = { checked -> onCheckedTask(task, checked) },
+            onClose = { onCloseTask(task) }
             )
         }
     }

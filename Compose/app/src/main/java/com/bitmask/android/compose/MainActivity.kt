@@ -72,9 +72,14 @@ fun Greeting(name: String, wellnessViewModel: WellnessViewModel = viewModel(), m
 //        val list = remember {
 //            getWellnessTasks().toMutableStateList()
 //        }
-        WellnessTaskList(list = wellnessViewModel.tasks, onCloseTask = {
-            task -> wellnessViewModel.remove(task)
-        })
+        WellnessTaskList(list = wellnessViewModel.tasks,
+            onCheckedTask = { task, checked ->
+                wellnessViewModel.changeTaskChange(task, checked)
+            },
+            onCloseTask = {
+                task -> wellnessViewModel.remove(task)
+            }
+        )
     }
 }
 
