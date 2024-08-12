@@ -50,6 +50,7 @@ fun WellnessTaskItem(
 @Composable
 fun WellnessTaskItem(
     taskName: String,
+    onClose: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var checkedState by rememberSaveable { mutableStateOf(false) }
@@ -60,9 +61,7 @@ fun WellnessTaskItem(
         oncheckedChange = {
             newValue -> checkedState = newValue
         },
-        onClose = {
-
-        },
+        onClose = onClose,
         modifier = modifier
     )
 }
@@ -76,14 +75,16 @@ fun getWellnessTasks() = List(30) {
 @Composable
 fun WellnessTaskList(
     list: List<WellnessTask> = remember {
-        getWellnessTasks().toMutableStateList()
+        getWellnessTasks()
     },
+    onCloseTask: (WellnessTask) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier) {
         items(list) {
             task -> WellnessTaskItem(
-                taskName = task.label
+                taskName = task.label,
+                onClose = { onCloseTask(task) },
             )
         }
     }
