@@ -69,6 +69,8 @@ fun Greeting(name: String, wellnessViewModel: WellnessViewModel = viewModel(), m
 
         HelloScreen()
 
+        HViewPager()
+
 //        val list = remember {
 //            getWellnessTasks().toMutableStateList()
 //        }
