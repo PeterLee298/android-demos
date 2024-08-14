@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.PageSize
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
@@ -43,6 +44,7 @@ fun HViewPager() {
     Column {
         HorizontalPager(state = pagerState,
             beyondBoundsPageCount = 2,
+            pageSize = PageSize.Fill/*PageSize.Fixed(120.dp)*/
         ) { page ->
             Text(text = "Page: $page",
                 modifier = Modifier
