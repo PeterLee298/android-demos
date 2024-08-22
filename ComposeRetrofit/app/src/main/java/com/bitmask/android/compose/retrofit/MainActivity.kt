@@ -5,15 +5,15 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.bitmask.android.compose.retrofit.model.Launch
@@ -39,15 +39,15 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainScreen(modifier: Modifier = Modifier,viewModel: SpaceXViewModel = SpaceXViewModel()) {
-    val launches = viewModel.launches.value
+    val launches by viewModel.launches.collectAsState()
 
-    Greeting("Android", launches, onclick = {
+    Greeting("Android", launches.toList(), onclick = {
         viewModel.getLaunches()
     })
 }
 
 @Composable
-fun Greeting(name: String, launches: List<Launch>?, modifier: Modifier = Modifier, onclick: () -> Unit = {}) {
+fun Greeting(name: String, launches: List<Launch>, modifier: Modifier = Modifier, onclick: () -> Unit = {}) {
 
     Column {
 
@@ -77,6 +77,6 @@ fun Greeting(name: String, launches: List<Launch>?, modifier: Modifier = Modifie
 @Composable
 fun GreetingPreview() {
     ComposeRetrofitTheme {
-        Greeting("Android", null)
+        Greeting("Android", emptyList())
     }
 }
